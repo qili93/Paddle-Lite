@@ -312,6 +312,13 @@ function(lite_cc_test TARGET)
     if (NOT args_EXCLUDE_COMPILE_DEPS)
         add_dependencies(lite_compile_deps ${TARGET})
     endif()
+
+    # Strips the symbols of our protobuf functions to fix the conflicts during
+    # loading Ascend CANN builder libs (dependency of register - libprotobuf.so.19)
+    if (LITE_WITH_HUAWEI_ASCEND_NPU)
+        set(LINK_FLAGS "-Wl,--version-script ${PADDLE_SOURCE_DIR}/lite/core/lite.map")
+        set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+    endif()
 endfunction()
 
 set(arm_kernels CACHE INTERNAL "arm kernels")
