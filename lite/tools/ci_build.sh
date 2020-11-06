@@ -33,6 +33,7 @@ if [ ${os_name} == "Darwin" ]; then
 fi
 
 function prepare_thirdparty {
+    cd $workspace/
     if [ ! -d $workspace/third-party -o -f $workspace/third-party-05b862.tar.gz ]; then
         rm -rf $workspace/third-party
 
@@ -43,6 +44,7 @@ function prepare_thirdparty {
     else
         git submodule update --init --recursive
     fi
+    cd -
 }
 
 function prepare_opencl_source_code {
