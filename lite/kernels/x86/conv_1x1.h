@@ -1,4 +1,4 @@
-// Copyright (c) 2019 PaddlePaddle Authors. All Rights Reserved.
+// Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,53 +11,45 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#pragma once
 
 #pragma once
-#include "lite/backends/x86/math/math_function.h"
+
+#include <cmath>
+#include <string>
+#include <vector>
+#include "lite/core/context.h"
 #include "lite/core/kernel.h"
-#include "lite/core/op_registry.h"
-#include "lite/operators/conv_op.h"
-#ifdef LITE_WITH_PROFILE
-#include "lite/core/profile/profiler.h"
-#endif
+#include "lite/core/target_wrapper.h"
 
 namespace paddle {
 namespace lite {
 namespace kernels {
 namespace x86 {
 
-template <typename T>
-class Conv2dCompute : public KernelLite<TARGET(kX86), PRECISION(kFloat)> {
+template <PrecisionType Ptype>
+class Conv1X1 : public KernelLite<TARGET(kX86), Ptype> {
  public:
+  Conv1X1() = default;
+  ~Conv1X1() {}
   virtual void PrepareForRun();
-
-  virtual void ReInitWhenNeeded() {
-    CHECK(impl_);
-    impl_->ReInitWhenNeeded();
-  }
-
-  virtual void Run() {
-    CHECK(impl_);
-    impl_->Run();
-  }
+  virtual void Run();
 
 #ifdef LITE_WITH_PROFILE
   virtual void SetProfileRuntimeKernelInfo(
       paddle::lite::profile::OpCharacter* ch) {
-    impl_->SetProfileRuntimeKernelInfo(ch);
+    ch->kernel_func_name = kernel_func_name_;
   }
-#endif
 
-  ~Conv2dCompute() {
-    if (impl_ != nullptr) {
-      delete impl_;
-    }
-  }
+  std::string kernel_func_name_{"NotImplForConvDw"};
+#endif
 
  private:
   using param_t = operators::ConvParam;
-  KernelLite<TARGET(kX86), PRECISION(kFloat)>* impl_{nullptr};
+  Tensor weights_;
+  Tensor bias_;
+  bool flag_trans_weights_{false};
+  bool flag_trans_bias_{false};
+  std::vector<float> w_scale_;
 };
 
 }  // namespace x86

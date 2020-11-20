@@ -13,7 +13,12 @@ add_kernel(cast_compute_x86 X86 basic SRCS cast_compute.cc DEPS ${lite_kernel_de
 add_kernel(slice_compute_x86 X86 basic SRCS slice_compute.cc DEPS ${lite_kernel_deps})
 add_kernel(fill_constant_batch_size_like_compute_x86 X86 basic SRCS fill_constant_batch_size_like_compute.cc DEPS ${lite_kernel_deps} math_function)
 add_kernel(reshape_compute_x86 X86 basic SRCS reshape_compute.cc DEPS ${lite_kernel_deps} reshape_op)
-add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} blas im2col vol2col)
+
+add_kernel(conv_1x1_x86 X86 basic SRCS conv_1x1.cc DEPS ${lite_kernel_deps})
+add_kernel(conv_avx2_x86 X86 basic SRCS conv_avx2.cc DEPS ${lite_kernel_deps})
+add_kernel(conv_avx2_group_x86 X86 basic SRCS conv_avx2_group.cc DEPS ${lite_kernel_deps})
+add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} conv_1x1_x86 conv_avx2_x86 conv_avx2_group_x86)
+
 # lite_cc_library(elementwise_compute_x86 SRCS elementwise_compute.cc DEPS ${lite_kernel_deps} elementwise_sub_op elementwise_add_op)
 # lite_cc_library(softmax_compute_x86 SRCS softmax_compute.cc DEPS ${lite_kernel_deps} softmax)
 # lite_cc_library(dropout_compute_x86 SRCS dropout_compute.cc DEPS ${lite_kernel_deps} )
